@@ -1,5 +1,5 @@
 :: Copyright (c) 2023-24
-:: This Script Written by t.me/Kumar_Jy and only work if you follow proper github guide (https://github.com/Kumar-Jy/Windows-in-PocoF1-Without-PC)
+:: This Script Written by t.me/Kumar_Jy and only work if you follow proper github guide (https://github.com/Kumar-Jy/Windows-in-(device-Name)-Without-PC)
 
 
 (echo Rescan
@@ -13,10 +13,10 @@ echo assign letter=W
 
 echo off
 
+echo
 mode 800
-
 echo.
 
 echo
-W:\install2.bat
+W:\installer\install2.bat
 
