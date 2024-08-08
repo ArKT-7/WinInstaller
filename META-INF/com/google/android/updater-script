@@ -46,7 +46,6 @@ package_extract_file "uefi.img" "/tmp/win/installer/uefi.img";
 package_extract_file "install.esd" "/tmp/win/installer/install.esd";
 package_extract_file "winactivator.bat" "/tmp/win/winactivator.bat";
 package_extract_file "install.bat" "/tmp/win/installer/install.bat";
-package_extract_file "install2.bat" "/tmp/win/installer/install2.bat";
 unzip /tmp/win/installer/WinPE.zip -d /tmp/esp
 unzip /tmp/win/installer/Driver.zip -d /tmp/win/installer
 sleep 1
