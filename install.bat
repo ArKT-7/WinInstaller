@@ -52,8 +52,8 @@ echo.
 (
 echo Rescan
 echo sel dis 0
-echo sel par 21
-echo format quick fs=fat32 label="ESPF1"
+echo sel par 31
+echo format quick fs=fat32 label="ESP"
 echo assign letter=S
 ) | diskpart
 
