@@ -75,9 +75,8 @@ bcdedit /store S:\efi\microsoft\boot\bcd /set {Default} recoveryenabled no
 echo.
 echo boot loader configration completed.
 echo.
-
 echo cleaning installation file.
-rmdir /s /q C:\installer
+rmdir /s /q "C:\installer"
 echo.
 echo cleaning installation file completed.
 echo.
