@@ -1,5 +1,7 @@
 # WinInstaller
-Stand alone Windows Installer without PC
+> copyright © 2023 2024
+### Description
+Windows Installer flashable zip [without PC] for supported ARM64 device.
 
 ### Instruction
 -  Download this repository and unpack it. 
