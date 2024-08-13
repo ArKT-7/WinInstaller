@@ -2,11 +2,11 @@
 #
 # Copyright (C) 2023-24 https://github.com/Kumar-Jy
 #
-# Made for WINDOWS Installation on Xiaomi Pad 5 (Nabu) 
+# Made for WINDOWS Installation on ......... (code name) 
 #
 ui_print "*************************************************";
-ui_print "* Welcome to Windows Installation on XiaomiPad5 *";
-ui_print "*         This Script is only for NABU          *";
+ui_print "* Welcome to Windows Installation on .......... *";
+ui_print "*         This Script is only for ....          *";
 ui_print "*                Made by Kumar_Jy               *";
 ui_print "*       Telegram : https://t.me/Kumar_Jy        *";
 ui_print "*     Github  : https://github.com/Kumar-Jy     *";
@@ -28,8 +28,8 @@ umount /dev/block/by-name/win
 sleep 1
 ui_print "*************************************************";
 ui_print "*                Formating Partition            *";
-mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPNABU
-mkfs.ntfs -f /dev/block/by/name/win -L WINNABU
+mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESP
+mkfs.ntfs -f /dev/block/by/name/win -L WIN
 sleep 1
 ui_print "*************************************************";
 ui_print "*                Mounting Partition             *";
