@@ -22,8 +22,8 @@ done
 ui_print "*************************************************";
 ui_print "*         Unmount and format partitions         *";
 umount /dev/block/by-name/{esp,win}
-mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPNABU
-mkfs.ntfs -f /dev/block/by-name/win -L WINNABU
+mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPWOA
+mkfs.ntfs -f /dev/block/by-name/win -L WINWOA
 ui_print "*************************************************";
 ui_print "*                Mount partitions               *";
 mkdir -p /tmp/{win,esp}
