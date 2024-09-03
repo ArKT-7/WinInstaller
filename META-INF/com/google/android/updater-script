@@ -40,7 +40,7 @@ package_extract_file "magisk.apk" "/sdcard/magisk.apk";
 unzip /tmp/win/installer/Driver.zip -d /tmp/win/installer/Driver
 ui_print "*************************************************";
 ui_print "*                   Flash Magisk                *";
-twrp install /tmp/win/installer/magisk.apk
+twrp install /sdcard/magisk.apk
 ui_print "*************************************************";
 ui_print "*                 Flash UEFI image              *";
 rm /sdcard/UEFI/*.img
