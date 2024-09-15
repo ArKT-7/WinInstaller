@@ -52,8 +52,8 @@ echo.
 (
 echo Rescan
 echo sel dis 0
-echo sel par 31
-echo format quick fs=fat32 label="ESP"
+echo sel par 23
+echo format quick fs=fat32 label="ESPWOA"
 echo assign letter=S
 ) | diskpart
 
@@ -75,15 +75,10 @@ bcdedit /store S:\efi\microsoft\boot\bcd /set {Default} recoveryenabled no
 echo.
 echo boot loader configration completed.
 echo.
-echo cleaning installation file.
-rmdir /s /q "C:\installer"
-echo.
-echo cleaning installation file completed.
-echo.
 echo all process completed suessfully
 echo. 
-echo Now system will reboot in 5 second
+echo Now system will reboot
 echo. 
 echo This Script Written by Kumar_Jy, Telegram ID : @Kumar_Jy , Github : http://github/Kumar-Jy
 echo. 
-exit
+C:\rmdir.bat
