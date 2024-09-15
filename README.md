@@ -10,8 +10,9 @@ Windows Installer flashable zip [without PC] for supported ARM64 device.
 - Downlod and place uefi.img of your device in unpacked folder
 - Select all file/folder and repack it as zip file.
 - Now your WnInstalleer Zip file is ready.
-- Download Windows ESD image and Driver.zip and place it to `download` in your device folder.
-- Must rename your device's drivers.zip file to `Driver.zip` or it will failed to install it.  
+- Download Windows ESD image and Drivers.zip (both the file should be in defauld `download` folder in your device.
+- Must rename your device's drivers.zip file to `Driver.zip` (letter is case sensitive) or it will failed to install it.  
 - Flash it using any custom recovery (Orangefox recommended), or you can also sideload it through PC.
 - enjoy !
 ##
+Note :- All zip file should be packed without compression.
