@@ -38,11 +38,9 @@ cp /sdcard/Download/*.esd -p /tmp/win/installer/install.esd
 for file in pe uefi.img install.bat; do
   package_extract_file "$file" "/tmp/win/installer/$file"
 done
-package_extract_file "magisk.apk" "/sdcard/magisk.apk";
+package_extract_file "rmdir.bat" "/tmp/win/rmdir.bat";
+package_extract_file "winactivator.bat" "/tmp/win/winactivator.bat";
 unzip /sdcard/Download/Driver.zip -d /tmp/win/installer/Driver
-ui_print "*************************************************";
-ui_print "*                  Flash Magisk                 *";
-twrp install /sdcard/magisk.apk
 ui_print "*************************************************";
 ui_print "*                Flash UEFI image               *";
 rm /sdcard/UEFI/*.img
