@@ -19,43 +19,54 @@ mke2.fs -t ext2 /dev/block/by-name/cust
 mount /dev/block/by-name/cust /cust
 mkdir -p /cust/backup
 for part in boot$(getprop ro.boot.slot_suffix) fsc fsg modemst1 modemst2; do
-  dd if=/dev/block/by-name/$part of=/cust/backup/$part.img
+  dd if=/dev/block/by-name/$part of=/cust/backup/$part.img bs=8M
 done
 ui_print "*************************************************";
 ui_print "*         Unmount and format partitions         *";
 umount /dev/block/by-name/{esp,win}
-mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPWOA
-mkfs.ntfs -f /dev/block/by-name/win -L WINWOA
+mkfs.fat -F32 -s1 /dev/block/by-name/esp -n WOAESP
+mkfs.ntfs -f /dev/block/by-name/win -L WOAWIN
 ui_print "*************************************************";
 ui_print "*                Mount partitions               *";
 mkdir -p /tmp/{win,esp}
 mount.ntfs /dev/block/by-name/win /tmp/win
 mount /dev/block/by-name/esp /tmp/esp
 ui_print "*************************************************";
-ui_print "*             Copy installation files           *";
-mkdir -p /tmp/win/installer/Driver
-cp /sdcard/Download/*.esd -p /tmp/win/installer/install.esd
-for file in pe uefi.img install.bat; do
-  package_extract_file "$file" "/tmp/win/installer/$file"
+ui_print "*              Copying Windows Image            *";
+mkdir -p /mnt/win/installer/Driver
+if ls /sdcard/Download/*.esd 1> /dev/null 2>&1; then
+    cp /sdcard/Download/*.esd /mnt/win/installer/install.esd
+    ui_print "ESD file copied to /mnt/win/installer/install.esd"
+elif ls /sdcard/Download/*.wim 1> /dev/null 2>&1; then
+    cp /sdcard/Download/*.wim /mnt/win/installer/install.wim
+    ui_print "WIM file copied to /win/installer/install.wim"
+else
+    ui_print "No ESD or WIM files found in /sdcard/Download."
+    exit 1
+fi
+ui_print "*************************************************";
+ui_print "*         Extracting Installation File          *";
+for file in Driver.zip install.bat pe.img uefi.img; do
+  package_extract_file "$file" "/mnt/win/installer/$file"
 done
-package_extract_file "rmdir.bat" "/tmp/win/rmdir.bat";
-unzip /sdcard/Download/Driver.zip -d /tmp/win/installer/Driver
+package_extract_file "rmdir.bat" "/mnt/win/rmdir.bat";
+unzip /mnt/win/installer/Driver.zip -d /mnt/win/installer/Driver
 ui_print "*************************************************";
 ui_print "*                Flash UEFI image               *";
 rm /sdcard/UEFI/*.img
 mkdir -p /sdcard/{backup,UEFI}
 cp -r -n /cust/backup /sdcard
-dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img
-dd if=/tmp/win/installer/pe of=/dev/block/by-name/esp
-dd if=/sdcard/backup/boot.img of=/tmp/win/boot.img
-dd if=/tmp/win/installer/uefi.img of=/dev/block/by-name/boot$(getprop ro.boot.slot_suffix)
+dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img bs=8M
+dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=64M
+dd if=/sdcard/backup/boot.img of=/tmp/win/boot.img bs=64M
+dd if=/tmp/win/installer/uefi.img of=/dev/block/by-name/boot$(getprop ro.boot.slot_suffix) bs=8M
 sleep 1
 ui_print "*************************************************";
 ui_print "*              Flashing Completed               *";
 ui_print "*                                               *";
 ui_print "*             rebooting in 5 sec and            *";
 ui_print "*                                               *";
-ui_print "*     Installation will start automaticly       *";
+ui_print "*     Installation will start automatically     *";
 ui_print "*                                               *";
 ui_print "*  If Installation Failed, Don't Flash it again *";
 ui_print "*                                               *";
