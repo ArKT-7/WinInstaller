@@ -1,4 +1,3 @@
-@@echo off
-setlocal enabledelayedexpansion
-rmdir /s /q "C:\installer"
-exit
+@echo off
+rmdir /s /q "%targetDrive%\installer"
+shutdown /r /f /t 5
