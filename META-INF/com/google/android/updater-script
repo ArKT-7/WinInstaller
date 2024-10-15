@@ -2,11 +2,11 @@
 #
 # Copyright (C) 2023-24 https://github.com/Kumar-Jy
 #
-# Made for WINDOWS Installation on ......... (code name) 
+# Made for WINDOWS Installation on Xiaomi Pad 5 (Nabu) 
 #
 ui_print "*************************************************";
-ui_print "* Welcome to Windows Installation on .......... *";
-ui_print "*         This Script is only for ....          *";
+ui_print "* Welcome to Windows Installation on XiaomiPad5 *";
+ui_print "*         This Script is only for NABU          *";
 ui_print "*                Made by Kumar_Jy               *";
 ui_print "*       Telegram : https://t.me/Kumar_Jy        *";
 ui_print "*     Github  : https://github.com/Kumar-Jy     *";
@@ -15,17 +15,17 @@ ui_print "*           Installation Process Start          *";
 ui_print "*************************************************";
 ui_print "*  extracting boot and modem to /cust/backup    *";
 umount /dev/block/by-name/cust
-mke2.fs -t ext2 /dev/block/by-name/cust
+mke2fs -t ext2 /dev/block/by-name/cust
 mount /dev/block/by-name/cust /cust
 mkdir -p /cust/backup
-for part in boot$(getprop ro.boot.slot_suffix) fsc fsg modemst1 modemst2; do
+for part in boot$(getprop ro.boot.slot_suffix) dtbo$(getprop ro.boot.slot_suffix) fsc fsg modemst1 modemst2; do
   dd if=/dev/block/by-name/$part of=/cust/backup/$part.img bs=8M
 done
 ui_print "*************************************************";
 ui_print "*         Unmount and format partitions         *";
 umount /dev/block/by-name/{esp,win}
-mkfs.fat -F32 -s1 /dev/block/by-name/esp -n WOAESP
-mkfs.ntfs -f /dev/block/by-name/win -L WOAWIN
+mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPNABU
+mkfs.ntfs -f /dev/block/by-name/win -L WINNABU
 ui_print "*************************************************";
 ui_print "*                Mount partitions               *";
 mkdir -p /tmp/{win,esp}
@@ -33,32 +33,33 @@ mount.ntfs /dev/block/by-name/win /tmp/win
 mount /dev/block/by-name/esp /tmp/esp
 ui_print "*************************************************";
 ui_print "*              Copying Windows Image            *";
-mkdir -p /mnt/win/installer/Driver
+mkdir -p /tmp/win/installer/Driver
 if ls /sdcard/Download/*.esd 1> /dev/null 2>&1; then
-    cp /sdcard/Download/*.esd /mnt/win/installer/install.esd
-    ui_print "ESD file copied to /mnt/win/installer/install.esd"
+    cp /sdcard/Download/*.esd /tmp/win/installer/install.esd
+    ui_print "ESD file copied to /tmp/win/installer/install.esd"
 elif ls /sdcard/Download/*.wim 1> /dev/null 2>&1; then
-    cp /sdcard/Download/*.wim /mnt/win/installer/install.wim
+    cp /sdcard/Download/*.wim /tmp/win/installer/install.wim
     ui_print "WIM file copied to /win/installer/install.wim"
 else
     ui_print "No ESD or WIM files found in /sdcard/Download."
     exit 1
 fi
 ui_print "*************************************************";
-ui_print "*         Extracting Installation File          *";
-for file in Driver.zip install.bat pe.img uefi.img; do
-  package_extract_file "$file" "/mnt/win/installer/$file"
+ui_print "*          Extracting installation files        *";
+for file in Driver.zip pe.img uefi.img install.bat; do
+  package_extract_file "$file" "/tmp/win/installer/$file"
 done
-package_extract_file "rmdir.bat" "/mnt/win/rmdir.bat";
-unzip /mnt/win/installer/Driver.zip -d /mnt/win/installer/Driver
+package_extract_file "winactivator.bat" "/tmp/win/winactivator.bat";
+package_extract_file "rmdir.bat" "/tmp/win/rmdir.bat";
+unzip /tmp/win/installer/Driver.zip -d /tmp/win/installer/Driver
 ui_print "*************************************************";
-ui_print "*                Flash UEFI image               *";
+ui_print "*                 Flash UEFI image              *";
 rm /sdcard/UEFI/*.img
 mkdir -p /sdcard/{backup,UEFI}
 cp -r -n /cust/backup /sdcard
 dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img bs=8M
-dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=64M
-dd if=/sdcard/backup/boot.img of=/tmp/win/boot.img bs=64M
+dd if=/sdcard/backup/boot$(getprop ro.boot.slot_suffix).img of=/tmp/win/boot.img bs=64M
+dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=8M
 dd if=/tmp/win/installer/uefi.img of=/dev/block/by-name/boot$(getprop ro.boot.slot_suffix) bs=8M
 sleep 1
 ui_print "*************************************************";
