@@ -3,6 +3,11 @@
 ### Description
 Windows Installer flashable zip [without PC] for supported ARM64 device.
 
+### Perquisite 
+- You should have Orange Fox / TWRP recovery installed
+- There is already created necessary partitionn for windows installation.
+- Make sure ESP partition size is not less then 350MB
+
 ### Instruction
 - Download this repository as zip and unpack it. 
 - Open install.bat in any text editor, find diskpart section and change esp disk number as per your android partition.
