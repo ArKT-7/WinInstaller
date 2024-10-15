@@ -1,106 +1,125 @@
 :: Copyright (c) 2023-24
-:: This Script Written by t.me/Kumar_Jy and only work if you follow proper github guide (https://github.com/Kumar-Jy/Windows-in-.........-Without-PC)
-
-echo off
+:: This Script Written by t.me/Kumar_Jy and only works if you follow the proper guide on GitHub (https://github.com/Kumar-Jy/Windows-in-XIAOMI-PAD-5-Without-PC)
+@echo off
 setlocal enabledelayedexpansion
 
-:: Set the console mode
+:: Set console mode
 mode 800
+echo.
+echo =================================================
+echo Searching for the index value of "Windows 11 Pro"...
+echo =================================================
+echo.
 
-REM Set the image file location
-set fileLocation="C:\installer\install"
+:: Initialize variables
+set imageFile=
+set targetDrive=
 
-REM Check if ESD or WIM file exists
-if exist %fileLocation%.esd (
-    set imageFile=%fileLocation%.esd
-) else if exist %fileLocation%.wim (
-    set imageFile=%fileLocation%.wim
-) else (
-    echo Neither ESD nor WIM file found.
-    pause
-    exit /b
-)
-
-REM Initialize index variable
-set index=
-
-REM Get the index number for "Windows 11 Pro"
-for /f "tokens=2 delims=: " %%i in ('dism /Get-WimInfo /WimFile:%imageFile% ^| findstr /i /c:"Index :"') do (
-    set currentIndex=%%i
-    for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Description : Windows 11 Pro"') do (
-        set index=%%i
+:: Loop through all drives to find the image file
+for %%G in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+    if exist %%G:\installer\install.esd (
+        set imageFile=%%G:\installer\install.esd
+        set targetDrive=%%G:
+        goto :found
+    ) else if exist %%G:\installer\install.wim (
+        set imageFile=%%G:\installer\install.wim
+        set targetDrive=%%G:
         goto :found
     )
 )
 
+echo Neither ESD nor WIM file found on any drive.
+pause
+exit /b
+
 :found
-REM Check if the index was found
+echo.
+echo =================================================
+echo Image file found at %imageFile%
+echo Target drive set to %targetDrive%
+echo =================================================
+echo.
+
+:: Initialize index variable
+set index=
+
+:: Get the index number for "Windows 11 Pro"
+for /f "tokens=2 delims=: " %%i in ('dism /Get-WimInfo /WimFile:%imageFile% ^| findstr /i /c:"Index :"') do (
+    set currentIndex=%%i
+    for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Description : Windows 11 Pro"') do (
+        set index=%%i
+        goto :indexFound
+    )
+)
+
+:indexFound
+:: Check if the index was found
 if "%index%"=="" (
     echo "Windows 11 Pro" not found in the image file.
     pause
     exit /b
 )
 
-REM Debugging information
+:: Debugging information
+echo.
+echo =================================================
 echo Final index value is %index%
+echo =================================================
+echo.
 
-REM Apply the selected index to the C:\ drive
-dism /Apply-Image /ImageFile:%imageFile% /Index:%index% /ApplyDir:C:\
-
+:: Apply the selected index to the target drive
+echo Applying image to %targetDrive%...
+dism /Apply-Image /ImageFile:%imageFile% /Index:%index% /ApplyDir:%targetDrive%
 echo Image applied successfully!
-
-echo.
-echo Performing Driver Installation...
-dism /image:C:\ /add-driver /Driver:C:\installer\Driver /recurse
-
-echo.
-echo Driver Installation completed.
 echo.
 
-echo assigning drive letter for bootloader.
+echo =================================================
+echo Assigning drive letter for bootloader...
+echo =================================================
+echo.
 
-REM List all volumes and find the first FAT32 volume
-for /f "tokens=2,3 delims= " %%A in ('echo list volume ^| diskpart ^| findstr /C:"FAT32 "') do (
+:: List all volumes and find the FAT32 volume with label containing ESP
+for /f "tokens=2,3,4 delims= " %%A in ('echo list volume ^| diskpart ^| findstr /I "FAT32" ^| findstr /I "ESP"') do (
     set VolumeNumber=%%A
-    goto :found
+    goto :volFound
 )
 
-echo No FAT32 volume found.
+echo No FAT32 ESP volume found.
 exit /b 1
 
-:found
-echo Found FAT32 volume, Volume Number %VolumeNumber%
+:volFound
+echo Found FAT32 volume containing ESP, Volume Number %VolumeNumber%
 
-REM Format the volume and assign the drive letter S
+:: Format the volume, assign the drive letter S, and label it "ESPWOA"
 (
     echo select volume %VolumeNumber%
-    echo format fs=fat32 quick
+    echo format fs=fat32 quick label=ESPWOA
     echo assign letter=S
 ) | diskpart
 
-echo Volume has been formatted with FAT32 and assigned to S.
-
+echo Volume has been formatted with FAT32, assigned to S, and labeled "ESPWOA".
+echo.
+echo Creating bootloader file...
+bcdboot %targetDrive%\windows /s S: /f UEFI
+echo Bootloader file creation complete.
 echo.
 
-echo Creating Bootloader file...
-bcdboot C:\windows /s S: /f UEFI
+echo =================================================
+echo Windows installation process completed!
+echo =================================================
+echo.
+
+echo Now performing driver installation...
+
+call %targetDrive%\installer\Driver\DriverInstaller.lnk
 
 echo.
-echo Bootloader file creation completed
+echo Removing installer directory...
+start %targetDrive%\rmdir.bat
+echo.
 
-echo. 
-echo boot loader configuration started ...
-bcdedit /store S:\efi\microsoft\boot\bcd /set {Default} testsigning on
-bcdedit /store S:\efi\microsoft\boot\bcd /set {Default} nointegritychecks on
-bcdedit /store S:\efi\microsoft\boot\bcd /set {Default} recoveryenabled no
-
+echo =================================================
+echo Shutting down in 5 seconds...
+echo =================================================
 echo.
-echo boot loader configration completed.
-echo.
-echo all process completed suessfully
-echo. 
-echo Now system will reboot in 5 second
-echo. 
-echo This Script Written by Kumar_Jy, Telegram ID : @Kumar_Jy , Github : http://github/Kumar-Jy
-echo.
-C:/rmdir.bat
+echo this script is written by https://gitHub.com/Kumar-Jy
