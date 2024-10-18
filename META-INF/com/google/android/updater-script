@@ -2,11 +2,12 @@
 #
 # Copyright (C) 2023-24 https://github.com/Kumar-Jy
 #
-# Made for WINDOWS Installation on Xiaomi Pad 5 (Nabu) 
+# Made for WINDOWS Installation on [Device Name] 
 #
+show_progress 1.34 90;
 ui_print "*************************************************";
-ui_print "* Welcome to Windows Installation on XiaomiPad5 *";
-ui_print "*         This Script is only for NABU          *";
+ui_print "* Welcome to Windows Installation on .......... *";
+ui_print "*         This Script is only for ......        *";
 ui_print "*                Made by Kumar_Jy               *";
 ui_print "*       Telegram : https://t.me/Kumar_Jy        *";
 ui_print "*     Github  : https://github.com/Kumar-Jy     *";
@@ -24,8 +25,8 @@ done
 ui_print "*************************************************";
 ui_print "*         Unmount and format partitions         *";
 umount /dev/block/by-name/{esp,win}
-mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPNABU
-mkfs.ntfs -f /dev/block/by-name/win -L WINNABU
+mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESPWOA
+mkfs.ntfs -f /dev/block/by-name/win -L WINWOA
 ui_print "*************************************************";
 ui_print "*                Mount partitions               *";
 mkdir -p /tmp/{win,esp}
@@ -50,7 +51,6 @@ for file in Driver.zip pe.img uefi.img install.bat; do
   package_extract_file "$file" "/tmp/win/installer/$file"
 done
 package_extract_file "winactivator.bat" "/tmp/win/winactivator.bat";
-package_extract_file "rmdir.bat" "/tmp/win/rmdir.bat";
 unzip /tmp/win/installer/Driver.zip -d /tmp/win/installer/Driver
 ui_print "*************************************************";
 ui_print "*                 Flash UEFI image              *";
