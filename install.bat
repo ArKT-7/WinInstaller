@@ -172,7 +172,7 @@ echo.
 echo ==========================================================
 echo Removing installer directory...
 echo ==========================================================
-cd %targetDrive%
+cd %targetDrive%\
 rmdir /s /q "%targetDrive%\installer"
 echo.
 echo ==========================================================
