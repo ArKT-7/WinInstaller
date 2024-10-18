@@ -149,7 +149,7 @@ echo Found FAT32 volume with ESP or PE, Volume Number %VolumeNumber%
 ) | diskpart
 
 echo.
-echo Volume has been formatted with FAT32, assigned to S, and labeled "ESPNABU".
+echo Volume has been formatted with FAT32, assigned to S, and labeled "ESPWOA".
 echo.
 echo ==========================================================
 echo Creating bootloader file...
@@ -163,6 +163,7 @@ echo ==========================================================
 echo Windows installation process completed!
 echo ==========================================================
 echo.
+
 echo ==========================================================
 echo Now performing driver installation...
 echo ==========================================================
@@ -175,6 +176,7 @@ echo ==========================================================
 cd %targetDrive%\
 rmdir /s /q "%targetDrive%\installer"
 echo.
+
 echo ==========================================================
 echo Rebooting in 5 seconds...
 echo ==========================================================
