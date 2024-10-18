@@ -15,12 +15,9 @@ ui_print "*************************************************";
 ui_print "*           Installation Process Start          *";
 ui_print "*************************************************";
 ui_print "*  extracting boot and modem to /cust/backup    *";
-umount /dev/block/by-name/cust
-mke2fs -t ext2 /dev/block/by-name/cust
-mount /dev/block/by-name/cust /cust
-mkdir -p /cust/backup
+mkdir -p /tmp/backup
 for part in boot$(getprop ro.boot.slot_suffix) dtbo$(getprop ro.boot.slot_suffix) fsc fsg modemst1 modemst2; do
-  dd if=/dev/block/by-name/$part of=/cust/backup/$part.img bs=8M
+  dd if=/dev/block/by-name/$part of=/tmp/imptbackup/$part.img bs=8M
 done
 ui_print "*************************************************";
 ui_print "*         Unmount and format partitions         *";
@@ -56,7 +53,7 @@ ui_print "*************************************************";
 ui_print "*                 Flash UEFI image              *";
 rm /sdcard/UEFI/*.img
 mkdir -p /sdcard/{backup,UEFI}
-cp -r -n /cust/backup /sdcard
+cp -r -n /tmp/backup/ /sdcard
 dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img bs=8M
 dd if=/sdcard/backup/boot$(getprop ro.boot.slot_suffix).img of=/tmp/win/boot.img bs=64M
 dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=8M
