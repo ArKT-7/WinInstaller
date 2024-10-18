@@ -14,11 +14,13 @@ ui_print "*     Github  : https://github.com/Kumar-Jy     *";
 ui_print "*************************************************";
 ui_print "*           Installation Process Start          *";
 ui_print "*************************************************";
-ui_print "*  extracting boot and modem to /cust/backup    *";
+ui_print "*  backup Importent Partition    *";
 mkdir -p /tmp/backup
 for part in boot$(getprop ro.boot.slot_suffix) dtbo$(getprop ro.boot.slot_suffix) fsc fsg modemst1 modemst2; do
-  dd if=/dev/block/by-name/$part of=/tmp/imptbackup/$part.img bs=8M
+  dd if=/dev/block/by-name/$part of=/tmp/imptbackup/$part.img bs=16M
 done
+mkdir -p /sdcard/{backup,UEFI}
+cp -r -n /tmp/backup/ /sdcard
 ui_print "*************************************************";
 ui_print "*         Unmount and format partitions         *";
 umount /dev/block/by-name/{esp,win}
@@ -52,11 +54,9 @@ unzip /tmp/win/installer/Driver.zip -d /tmp/win/installer/Driver
 ui_print "*************************************************";
 ui_print "*                 Flash UEFI image              *";
 rm /sdcard/UEFI/*.img
-mkdir -p /sdcard/{backup,UEFI}
-cp -r -n /tmp/backup/ /sdcard
 dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img bs=8M
-dd if=/sdcard/backup/boot$(getprop ro.boot.slot_suffix).img of=/tmp/win/boot.img bs=64M
-dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=8M
+dd if=/sdcard/backup/boot$(getprop ro.boot.slot_suffix).img of=/tmp/win/boot.img bs=16M
+dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=64M
 dd if=/tmp/win/installer/uefi.img of=/dev/block/by-name/boot$(getprop ro.boot.slot_suffix) bs=8M
 sleep 1
 ui_print "*************************************************";
