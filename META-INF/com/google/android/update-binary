@@ -65,6 +65,47 @@ ui_print() {
   fi;
 }
 
+# UI_PRINT FOR TWRP FIX BY telegram - ArKT_7, Github - https://github.com/ArKT-7
+#
+
+OUTFD=/proc/self/fd/$2;
+
+ui_print() {
+  until [ ! "$1" ]; do
+    echo "ui_print $1
+      ui_print" >> $OUTFD;
+    shift;
+  done;
+}
+
+
+show_progress() { echo "progress $1 $2" >> $OUTFD; }
+
+
+copy_with_progress() {
+    local src_file=$1
+    local dest_file=$2
+
+    total_size=$(stat -c%s "$src_file")
+    cp "$src_file" "$dest_file" &
+
+    cp_pid=$!
+
+    while kill -0 "$cp_pid" 2>/dev/null; do
+        copied_size=$(stat -c%s "$dest_file" 2>/dev/null || echo 0)
+        percentage=$(echo "scale=2; ($copied_size / $total_size) * 100" | bc)
+
+        # Output progress on the same line
+        printf "\rCopying %s: Progress: %.10f%%" "$(basename "$src_file")" "$percentage"
+
+        sleep 1
+    done
+
+    # Ensure the final line ends with a newline
+    echo ""
+}
+
+
 package_extract_file(){
 	if [ $# != 2 ] 
 	then echo "$0 expects 2 args, got $#"; 
