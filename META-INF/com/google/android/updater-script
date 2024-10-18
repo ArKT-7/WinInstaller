@@ -75,4 +75,5 @@ ui_print "*         ask for help on Telegram Chat         *";
 ui_print "*                                               *";
 ui_print "*************************************************";
 sleep 5
+ui_print "Ui Print and progress bar fixed by https://github.com/ArKT-7"; 
 reboot
