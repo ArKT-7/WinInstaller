@@ -71,6 +71,6 @@ ui_print "*                                               *";
 ui_print "*         ask for help on Telegram Chat         *";
 ui_print "*                                               *";
 ui_print "*************************************************";
+ui_print "Ui Print and progress bar for TWRP fixed by https://github.com/ArKT-7";
 sleep 5
-ui_print "Ui Print and progress bar for TWRP fixed by https://github.com/ArKT-7"; 
 reboot
