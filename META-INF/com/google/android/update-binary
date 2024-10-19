@@ -65,7 +65,7 @@ ui_print() {
   fi;
 }
 
-# UI_PRINT FIX  AND PREGRESS PERCENTAGE WHILE COPYING BY telegram - ArKT_7, Github - https://github.com/ArKT-7
+# UI_PRINT FIX  AND PROGRESS PERCENTAGE WHILE COPYING ADDED BY telegram - ArKT_7, Github - https://github.com/ArKT-7
 #
 
 OUTFD=/proc/self/fd/$2;
