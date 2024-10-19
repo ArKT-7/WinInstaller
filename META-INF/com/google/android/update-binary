@@ -65,10 +65,11 @@ ui_print() {
   fi;
 }
 
-# UI_PRINT FOR TWRP FIX BY telegram - ArKT_7, Github - https://github.com/ArKT-7
+# UI_PRINT FIX  AND PREGRESS PERCENTAGE WHILE COPYING BY telegram - ArKT_7, Github - https://github.com/ArKT-7
 #
 
 OUTFD=/proc/self/fd/$2;
+
 
 ui_print() {
   until [ ! "$1" ]; do
@@ -81,28 +82,22 @@ ui_print() {
 
 show_progress() { echo "progress $1 $2" >> $OUTFD; }
 
-
 copy_with_progress() {
     local src_file=$1
     local dest_file=$2
-
-    total_size=$(stat -c%s "$src_file")
+    local total_size=$(stat -c%s "$src_file")
+    local copied_size=0
+    local percentage=0
     cp "$src_file" "$dest_file" &
-
-    cp_pid=$!
-
+    local cp_pid=$!
     while kill -0 "$cp_pid" 2>/dev/null; do
         copied_size=$(stat -c%s "$dest_file" 2>/dev/null || echo 0)
         percentage=$(echo "scale=2; ($copied_size / $total_size) * 100" | bc)
-
-        # Output progress on the same line
-        printf "\rCopying %s: Progress: %.10f%%" "$(basename "$src_file")" "$percentage"
-
+        local progress_message="$(basename "$src_file") - $percentage%"
+        ui_print "$progress_message"
         sleep 1
     done
-
-    # Ensure the final line ends with a newline
-    echo ""
+    ui_print "Copy completed 100%."
 }
 
 
