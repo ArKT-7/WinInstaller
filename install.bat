@@ -41,14 +41,14 @@ echo.
 
 :: Initialize index variable
 set index=
-set description=""
+set Name=""
 
 :: Find the index for Windows 11 Pro
 for /f "tokens=2 delims=: " %%i in ('dism /Get-WimInfo /WimFile:%imageFile% ^| findstr /i /c:"Index :"') do (
     set currentIndex=%%i
-    for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Description : Windows 11 Pro"') do (
+    for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Name : Windows 11 Pro"') do (
         set index=%%i
-        set description="Windows 11 Pro"
+        set Name="Windows 11 Pro"
         goto :indexFound
     )
 )
@@ -58,9 +58,9 @@ if "%index%"=="" echo "Windows 11 Pro not found in the image file."
 if "%index%"=="" (
     for /f "tokens=2 delims=: " %%i in ('dism /Get-WimInfo /WimFile:%imageFile% ^| findstr /i /c:"Index :"') do (
         set currentIndex=%%i
-        for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Description : Windows 11 IoT Enterprise LTSC"') do (
+        for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Name : Windows 11 IoT Enterprise LTSC"') do (
             set index=%%i
-            set description="Windows 11 IoT Enterprise LTSC"
+            set Name="Windows 11 IoT Enterprise LTSC"
             goto :indexFound
         )
     )
@@ -71,9 +71,9 @@ if "%index%"=="" echo "Windows 11 IoT Enterprise LTSC not found in the image fil
 if "%index%"=="" (
     for /f "tokens=2 delims=: " %%i in ('dism /Get-WimInfo /WimFile:%imageFile% ^| findstr /i /c:"Index :"') do (
         set currentIndex=%%i
-        for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Description : Windows 10 Pro"') do (
+        for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Name : Windows 10 Pro"') do (
             set index=%%i
-            set description="Windows 10 Pro"
+            set Name="Windows 10 Pro"
             goto :indexFound
         )
     )
@@ -84,9 +84,9 @@ if "%index%"=="" echo "Windows 10 Pro not found in the image file."
 if "%index%"=="" (
     for /f "tokens=2 delims=: " %%i in ('dism /Get-WimInfo /WimFile:%imageFile% ^| findstr /i /c:"Index :"') do (
         set currentIndex=%%i
-        for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Description : Windows 11 Home"') do (
+        for /f "tokens=*" %%j in ('dism /Get-WimInfo /WimFile:%imageFile% /Index:%%i ^| findstr /i /c:"Name : Windows 11 Home"') do (
             set index=%%i
-            set description="Windows 11 Home"
+            set Name="Windows 11 Home"
             goto :indexFound
         )
     )
@@ -98,7 +98,7 @@ if "%index%"=="" (
 )
 
 :indexFound
-echo %description% found at index %index%
+echo %Name% found at index %index%
 
 :: Debugging information
 echo.
@@ -144,7 +144,7 @@ echo Found FAT32 volume with ESP or PE, Volume Number %VolumeNumber%
 :: Format the volume, assign the drive letter S, and label it "ESPWOA"
 (
     echo select volume %VolumeNumber%
-    echo format fs=fat32 quick label=ESPNABU
+    echo format fs=fat32 quick label=ESPWOA
     echo assign letter=S
 ) | diskpart
 
@@ -163,7 +163,6 @@ echo ==========================================================
 echo Windows installation process completed!
 echo ==========================================================
 echo.
-
 echo ==========================================================
 echo Now performing driver installation...
 echo ==========================================================
@@ -173,13 +172,14 @@ echo.
 echo ==========================================================
 echo Removing installer directory...
 echo ==========================================================
-cd %targetDrive%\
-rmdir /s /q "%targetDrive%\installer"
 echo.
-
 echo ==========================================================
 echo Rebooting in 5 seconds...
 echo ==========================================================
 echo.
 
 echo this script is written by https://gitHub.com/Kumar-Jy
+echo.
+echo.
+cd %targetDrive%\
+rmdir /s /q "%targetDrive%\installer"
