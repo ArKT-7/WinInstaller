@@ -1,25 +1,23 @@
 # WinInstaller
-> copyright © 2023 2024
-### Description
-Windows Installer flashable zip [without PC] for supported ARM64 device.
+© 2023–2024
 
-### Perquisite 
-- You should have Orange Fox / TWRP recovery installed
-- There is already created necessary partitionn for windows installation.
-- Make sure ESP partition size is not less then 350MB
+## Description
+Windows Installer flashable zip [without PC] for supported ARM64 devices.
+Prerequisites
+•	All necessary partition for Windows installation ( such as win and esp) should already be created
+•	Ensure the ESP partition size is not smaller then 350MB
 
-### Preparation
-- Download this repository as zip and unpack it. 
-- Open install.bat in any text editor, find diskpart section and change esp disk number as per your android partition.
-- Download pe file from release tag and add to the unpacked folder
-- Downlod and place uefi.img of your device in unpacked folder
-- Download and place the Driver.zip of your device in the unpacked folder
-- Select all file/folder and repack it as zip file.
-- Now your WnInstalleer Zip file is ready.
-- Download Windows ESD image (it should be in defauld `download` folder in your device.
-- Flash/sideload it using any custom recovery.
-### Note -
-> Must rename drivers.zip file to `Driver.zip` (letter is case sensitive) or it will failed to install it.  
-> Be sure Driver,zip not contain any additional folder.
-##
-Note :- All zip file should be packed without compression.
+## Preparation
+1.	Download this repository as a zip and unpack it.
+2.	Download the pe.img from the release tag and add it to the unpacked folder.
+3.	Place the uefi.img of your device in the unpacked folder.
+4.	Download the Drivers pack for your device, unpack it, go to the folder `Driver\definitions\Desktop\ARM64\Internal` and rename the XML file to sog.xml. Select all files and pack as Driver.zip.
+5.	Place the modified Driver.zip into the unpacked WinInstaller folder. It should contains Driver.zip, PE.img, UEFI.img, and META-INF (all file and folder names are case-sensitive).
+6.	Select all files/folders and repack them as a zip file. Your WinInstaller.zip is now ready.
+#d Flashing Instructions
+1.	Download the Windows ESD image (it should be in the default download folder in your device memory).
+2.	Boot to TWRP/OrangeFox recovery and flash/sideload WinInstaller.zip.
+3.	The device will automatically reboot to WinPE and begin the Windows installation.
+Important Notes
+•	Ensure all files and folder names match those specified above. All files and letters are case-sensitive.
+•	All zip files should be packed without compression.
