@@ -56,7 +56,7 @@ ui_print "*                 Flash UEFI image              *";
 rm /sdcard/UEFI/*.img
 dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img bs=8M
 dd if=/sdcard/backup/boot$(getprop ro.boot.slot_suffix).img of=/tmp/win/boot.img bs=64M
-dd if=/tmp/win/installer/pe.img of=/dev/block/by-name/esp bs=128M
+dd if=/tmp/win/installer/sog.img of=/dev/block/by-name/esp bs=128M
 dd if=/tmp/win/installer/uefi.img of=/dev/block/by-name/boot$(getprop ro.boot.slot_suffix) bs=8M
 sleep 1
 ui_print "*************************************************";
