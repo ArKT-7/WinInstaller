@@ -10,7 +10,7 @@ Windows Installer flashable zip [without PC] for supported ARM64 devices.
 
 ### Preparation
 - Download this repository as a zip and unpack it.
--	Download the pe.img from the release tag and add it to the unpacked folder.
+-	Download the sog.img from [here](https://github.com/Kumar-Jy/WinInstaller/releases/download/WinPE/pe.img) and add it to the unpacked folder.
 -	Place the uefi.img of your device in the unpacked folder.
 -	Download the Drivers pack for your device, unpack it, go to the folder `Driver\definitions\Desktop\ARM64\Internal` and rename the XML file to `sog.xml`. Select all files and pack as Driver.zip.
 - Place the modified Driver.zip into the unpacked WinInstaller folder. It should contains Driver.zip, sog.img, uefi.img, and META-INF (all file and folder names are case-sensitive).
@@ -20,6 +20,8 @@ Windows Installer flashable zip [without PC] for supported ARM64 devices.
 - Download the Windows ESD image (it should be in the default download folder in your device memory).
 - Boot to TWRP/OrangeFox recovery and flash/sideload WinInstaller.zip.
 - The device will automatically reboot to WinPE and begin the Windows installation.
+  
 > Important Notes
+- Ensure there is not more then one esd or wim file should be in Download folder.
 - Ensure all files and folder names match those specified above. All files and letters are case-sensitive.
 - All zip files should be packed without compression.
