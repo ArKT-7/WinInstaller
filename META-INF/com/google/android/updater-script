@@ -12,6 +12,16 @@ ui_print "*                Made by Kumar_Jy               *";
 ui_print "*       Telegram : https://t.me/Kumar_Jy        *";
 ui_print "*     Github  : https://github.com/Kumar-Jy     *";
 ui_print "*************************************************";
+ui_print "*               Verifying Device                *"
+ui_print "*************************************************"
+if [ $(blockdev --getsize64 /dev/block/by-name/win) < 26843545600 ]; then
+ui_print "WIN partition is smaller than 25GB. Aborting."
+    exit 1
+fi
+if [ $(blockdev --getsize64 /dev/block/by-name/esp) < 347287552 ]; then
+ui_print "ESP partition is smaller than 350MB. Aborting."
+    exit 1
+fi
 ui_print "*           Installation Process Start          *";
 ui_print "*************************************************";
 ui_print "*  backup Importent Partition    *";
