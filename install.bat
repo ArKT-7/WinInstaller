@@ -5,9 +5,15 @@ setlocal enabledelayedexpansion
 mode 800
 
 echo.
-echo ==========================================================
-echo Searching for the index value of "Windows Image"...
-echo ==========================================================
+echo ============================================================
+echo            Welcome to Windows Installation on ARM64 
+echo ============================================================
+echo.
+echo.
+echo ============================================================
+echo             Searching for the index value 
+echo                 of "Windows Image"...
+echo ============================================================
 echo.
 
 :: Initialize variables
@@ -19,24 +25,37 @@ for %%G in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
     if exist %%G:\installer\install.esd (
         set imageFile=%%G:\installer\install.esd
         set targetDrive=%%G:
+        set flashboot=%%G:\installer\sta.exe -n
         goto :found
     ) else if exist %%G:\installer\install.wim (
         set imageFile=%%G:\installer\install.wim
+        set flashboot=%%G:\installer\sta.exe -n
         set targetDrive=%%G:
         goto :found
     )
 )
 
 echo Neither ESD nor WIM file found on any drive.
+echo Take picture of error, force Reboot and ask for help...
+call %flashboot%
 pause
-exit /b
+exit /b 1
 
 :found
 echo.
-echo ==========================================================
-echo Image file found at %imageFile%
-echo Target drive set to %targetDrive%
-echo ==========================================================
+echo ============================================================
+echo           Image file found at %imageFile%
+echo           Windows drive set to %targetDrive%
+echo ============================================================
+echo.
+
+echo ============================================================
+echo Serching index of Windows in the following order ........
+echo       1.  Windows 11 Pro
+echo       2.  Windows 11 IoT Enterprise LTSC
+echo       3.  Windows 10 Pro
+echo       4.  Windows 11 Home
+echo ============================================================
 echo.
 
 :: Initialize index variable
@@ -92,32 +111,35 @@ if "%index%"=="" (
     )
 )
 if "%index%"=="" (
-    echo "Windows 11 Home not found in the image file."
+    echo "Index not found for the specified Windows version."
+	echo "Please check your Windows image and restart installation."
+	call %flashboot%
     pause
     exit /b
 )
 
 :indexFound
-echo %Name% found at index %index%
 
-:: Debugging information
-echo.
-echo ==========================================================
-echo Final index value is %index%
-echo ==========================================================
+echo ============================================================
+echo           Index value %index% found for %Name% 
+echo           starting winddows installation.....
+echo ============================================================
 echo.
 
 :: Apply the selected index to the target drive
 echo Applying image to %targetDrive%...
 dism /Apply-Image /ImageFile:%imageFile% /Index:%index% /ApplyDir:%targetDrive%
 echo Image applied successfully!
+
 echo.
-echo ==========================================================
-echo Assigning drive letter for bootloader...
-echo ==========================================================
+echo ============================================================
+echo           Assigning drive letter for 
+echo                  bootloader...
+echo ============================================================
 echo.
 
 :: List all volumes and find the FAT32 volume with label containing ESP
+set foundESP=false
 for /f "tokens=2,3,4 delims= " %%A in ('echo list volume ^| diskpart ^| findstr /I "FAT32" ^| findstr /I "ESP"') do (
     set VolumeNumber=%%A
     set foundESP=true
@@ -135,6 +157,9 @@ if not !foundESP! == true (
 
 if not defined VolumeNumber (
     echo No FAT32 ESP or PE volume found.
+    echo Take picture of error, force Reboot and ask for help.
+    call %flashboot%
+    pause
     exit /b 1
 )
 
@@ -149,37 +174,60 @@ echo Found FAT32 volume with ESP or PE, Volume Number %VolumeNumber%
 ) | diskpart
 
 echo.
-echo Volume has been formatted with FAT32, assigned to S, and labeled "ESPWOA".
+echo ============================================================
+echo           %VolumeNumber% has been formatted with FAT32,
+echo           Assigned letter S, and labeled "ESPWOA".
+echo ============================================================
 echo.
-echo ==========================================================
-echo Creating bootloader file...
-echo ==========================================================
 echo.
-
+echo ============================================================
+echo           Creating bootloader file...
+echo ============================================================
+echo.
 bcdboot %targetDrive%\windows /s S: /f UEFI
 
 echo.
 echo ==========================================================
-echo Windows installation process completed!
+echo           Windows installation process 
+echo                    completed!
 echo ==========================================================
 echo.
+echo.
 echo ==========================================================
-echo Now performing driver installation...
+echo           Now performing driver installation...
 echo ==========================================================
+
+:: Searching for an XML file in the target directory and renaming it to sog.xml
+set xmlFound=false
+for %%F in (%targetDrive%\installer\Driver\definitions\Desktop\ARM64\Internal\*.xml) do (
+    ren "%%F" sog.xml
+    set xmlFound=true
+    goto :fileFound
+)
+
+if "!xmlFound!"=="false" (
+    echo No XML files found in %targetDrive%\installer\Driver\definitions\Desktop\ARM64\Internal\.
+    %flashboot%
+    pause
+    exit /b 1
+)
+
+:fileFound
+echo XML file found and renamed to sog.xml.
+
+:continue
 call "X:\DriverInstaller\DriverInstaller.lnk"
 
 echo.
 echo ==========================================================
-echo Removing installer directory...
+echo Installation Completd.Rebooting in Windows in 5 seconds. 
+echo This script is written by Kumar-Jy, telegram : @kumar_jy
 echo ==========================================================
-echo.
-echo ==========================================================
-echo Rebooting in 5 seconds...
-echo ==========================================================
-echo.
+shutdown /r /t 5
 
-echo this script is written by https://gitHub.com/Kumar-Jy
 echo.
-echo.
-cd %targetDrive%\
+echo ==========================================================
+echo           Cleaning Installation File........
+echo ==========================================================
+cd %targetDrive%
 rmdir /s /q "%targetDrive%\installer"
