@@ -33,14 +33,12 @@ mkdir -p /sdcard/{backup,UEFI}
 cp -r -n /tmp/backup/ /sdcard
 ui_print "*-----------------------------------------------*";
 ui_print "*         Unmount and format partitions         *";
-umount /dev/block/by-name/{esp,win}
-mkfs.fat -F32 -s1 /dev/block/by-name/esp -n ESP$(getprop ro.product.device)
+umount /dev/block/by-name/win
 mkfs.ntfs -f /dev/block/by-name/win -L WIN$(getprop ro.product.device)
 ui_print "*-----------------------------------------------*";
 ui_print "*                Mount partitions               *";
-mkdir -p /tmp/{win,esp}
+mkdir -p /tmp/win
 mount.ntfs /dev/block/by-name/win /tmp/win
-mount /dev/block/by-name/esp /tmp/esp
 ui_print "*-----------------------------------------------*";
 ui_print "*              Copying Windows Image            *";
 mkdir -p /tmp/win/installer/Driver
@@ -68,7 +66,7 @@ dd if=/tmp/win/installer/uefi.img of=/sdcard/UEFI/uefi.img bs=8M
 dd if=/sdcard/backup/boot$(getprop ro.boot.slot_suffix).img of=/tmp/win/boot.img bs=64M
 dd if=/tmp/win/installer/sog.img of=/dev/block/by-name/esp bs=128M
 dd if=/tmp/win/installer/uefi.img of=/dev/block/by-name/boot$(getprop ro.boot.slot_suffix) bs=8M
-sleep 1
+umount /dev/block/by-name/win
 ui_print "*************************************************";
 ui_print "*              Flashing Completed               *";
 ui_print "*                                               *";
@@ -82,5 +80,4 @@ ui_print "*         ask for help on Telegram Chat         *";
 ui_print "*                                               *";
 ui_print "*************************************************";
 ui_print "Ui Print and progress bar for TWRP fixed by https://github.com/ArKT-7";
-sleep 5
-reboot
+exit
