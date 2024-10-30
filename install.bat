@@ -3,35 +3,54 @@ setlocal enabledelayedexpansion
 
 :: Set console mode
 mode 800
+echo.
+echo ============================================================
+echo            Welcome to Windows Installation on ARM64
+echo ============================================================
+echo.
+
+:: Initialize variables
+set flashboot=
+set targetDrive=
+
+:: Loop through all drives to find the image file
+for %%G in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+    if exist %%G:\installer\sta.exe (
+		set flashboot=%%G\installer\sta.exe -n
+		set targetDrive=%%G:
+        goto :found
+    )
+)
+
+echo sta.exe not found.
+echo Take picture of error, force Reboot and ask for help...
+pause
+exit /b 1
+
+:found
+
+:: Check if Windows is already installed
+if exist %targetDrive%\Windows\Explorer.exe (
+    echo Windows is already installed.
+    goto :formatAndAssign
+)
 
 echo.
 echo ============================================================
-echo            Welcome to Windows Installation on ARM64 
-echo ============================================================
-echo.
-echo.
-echo ============================================================
-echo             Searching for the index value 
+echo             Searching for the index value
 echo                 of "Windows Image"...
 echo ============================================================
 echo.
 
 :: Initialize variables
 set imageFile=
-set flashboot=
-set targetDrive=
 
 :: Loop through all drives to find the image file
 for %%G in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
     if exist %%G:\installer\install.esd (
         set imageFile=%%G:\installer\install.esd
-	set flashboot=%%G:\installer\sta.exe -n
-        set targetDrive=%%G:
         goto :found
     ) else if exist %%G:\installer\install.wim (
-        set imageFile=%%G:\installer\install.wim
-        set flashboot=%%G:\installer\sta.exe -n
-        set targetDrive=%%G:
         goto :found
     )
 )
@@ -49,7 +68,6 @@ echo           Image file found at %imageFile%
 echo           Windows drive set to %targetDrive%
 echo ============================================================
 echo.
-
 echo ============================================================
 echo Serching index of Windows in the following order ........
 echo       1.  Windows 11 Pro
@@ -113,17 +131,16 @@ if "%index%"=="" (
 )
 if "%index%"=="" (
     echo "Index not found for the specified Windows version."
-	echo "Please check your Windows image and restart installation."
-	call %flashboot%
+    echo "Please check your Windows image and restart installation."
+    call %flashboot%
     pause
     exit /b
 )
 
 :indexFound
-
 echo ============================================================
-echo           Index value %index% found for %Name% 
-echo           starting winddows installation.....
+echo           Index value %index% found for %Name%
+echo           starting windows installation.....
 echo ============================================================
 echo.
 
@@ -131,10 +148,11 @@ echo.
 echo Applying image to %targetDrive%...
 dism /Apply-Image /ImageFile:%imageFile% /Index:%index% /ApplyDir:%targetDrive%
 echo Image applied successfully!
-
 echo.
+
+:formatAndAssign
 echo ============================================================
-echo           Assigning drive letter for 
+echo           Assigning drive letter for
 echo                  bootloader...
 echo ============================================================
 echo.
@@ -167,17 +185,17 @@ if not defined VolumeNumber (
 :volFound
 echo Found FAT32 volume with ESP or PE, Volume Number %VolumeNumber%
 
-:: Format the volume, assign the drive letter S, and label it "ESPWOA"
+:: Format the volume, assign the drive letter S, and label it "ESPNABU"
 (
     echo select volume %VolumeNumber%
-    echo format fs=fat32 quick label=ESPWOA
+    echo format fs=fat32 quick label=ESPNABU
     echo assign letter=S
 ) | diskpart
 
 echo.
 echo ============================================================
 echo           %VolumeNumber% has been formatted with FAT32,
-echo           Assigned letter S, and labeled "ESPWOA".
+echo           Assigned letter S, and labeled "ESPNABU".
 echo ============================================================
 echo.
 echo.
@@ -185,11 +203,12 @@ echo ============================================================
 echo           Creating bootloader file...
 echo ============================================================
 echo.
+
 bcdboot %targetDrive%\windows /s S: /f UEFI
 
 echo.
 echo ==========================================================
-echo           Windows installation process 
+echo           Windows installation process
 echo                    completed!
 echo ==========================================================
 echo.
@@ -218,14 +237,12 @@ echo XML file found and renamed to sog.xml.
 
 :continue
 call "X:\DriverInstaller\DriverInstaller.lnk"
-
 echo.
 echo ==========================================================
-echo Installation Completd.Rebooting in Windows in 5 seconds. 
+echo Installation Completed. Rebooting in Windows in 5 seconds.
 echo This script is written by Kumar-Jy, telegram : @kumar_jy
 echo ==========================================================
 shutdown /r /t 5
-
 echo.
 echo ==========================================================
 echo           Cleaning Installation File........
